@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>导航网站</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <header></header>
+    <main>
+        <div class="wrapper" id="wrapBox"></div>
+    </main>
+    <footer></footer>
+
+    <script>
+        // 1. 初始化数据
+        var keys = {
+            0: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            1: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+            2: ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
+            length: 3
+        }
+
+        var hash = {
+            q: 'qzone.qq.com',
+            w: 'weibo.com',
+            e: 'ele.me',
+            r: 'renren.com',
+            t: 'taobao.com',
+            y: 'youtube.com',
+            u: 'uc.com',
+            i: 'iqiyi.com',
+            o: 'opera.com',
+            p: 'power.com',
+            a: 'amazon.com',
+            s: 'sogou.com',
+            d: 'douban.com',
+            f: 'facebook.com',
+            g: 'google.com.hk',
+            j: 'juejin.im',
+            z: 'zhihu.com',
+            v: 'v2ex.com',
+            b: 'baidu.com',
+            n: 'nodejs.com'
+        }
+
+        // JSON.parse(xx) xx为空串''时，报错Uncaught SyntaxError: Unexpected end of JSON input;
+        // null 或 'null'
+        hash = JSON.parse(localStorage.getItem('modifyZZZ') || 'null') || hash;
+
+        // 2. 生成键盘
+        for(var index = 0; index < keys['length']; index = index + 1) {
+            var lineKey = keys[index];
+            var div = document.createElement('div');
+
+            var lineIdx = 0;
+            for(var lineIdx = 0; lineIdx < lineKey['length']; lineIdx = lineIdx + 1) {
+
+                var span = document.createElement('span');
+                span.textContent = lineKey[lineIdx];
+
+                var btn = document.createElement('button');
+                btn.textContent = '编辑';
+                btn.className = lineKey[lineIdx];
+                btn.onclick = function(e) {
+
+                    var domain = prompt('请输入更改后的网址')
+                    e.target.nextSibling.src = 'http://' + domain + '/favicon.ico'
+                    
+                    hash[this.className] = domain
+                    localStorage.setItem('modifyZZZ', JSON.stringify(hash))
+                }
+
+                var img = document.createElement('img')
+                if(hash[lineKey[lineIdx]]) {
+                    img.src = 'http://' + hash[lineKey[lineIdx]] + '/favicon.ico'
+                }else {
+                    img.src = 'img/defaultIcon.png'
+                }
+
+                img.onerror = function(e) {
+                    e.target.src = 'img/defaultIcon.png'
+                }                
+                
+                var kbd = document.createElement('kbd')
+                kbd.className = 'key'
+
+                kbd.appendChild(span)
+                kbd.appendChild(btn)
+                kbd.appendChild(img)
+
+                div.appendChild(kbd);
+            }
+
+            wrapBox.appendChild(div);
+
+        }
+
+        // 3. 监听键盘
+        document.onkeyup = function(e) {
+            console.log('哇呜，键盘上的我被按到了', e);
+            if(!e.ctrlKey && !e.altKey && !e.shiftKey && e.key && hash[e.key]) {
+                //location.href = 'http://' + hash[e.key];
+                window.open('http://' + hash[e.key], '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
